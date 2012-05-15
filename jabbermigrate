@@ -1,0 +1,52 @@
+#!/usr/bin/perl -w
+use Net::Jabber;
+use FindBin;
+use Data::Dumper;
+my $usage = "Usage:
+	$FindBin::Script export <JID> <password> [<server>] [<port>] >export.txt
+	$FindBin::Script import <JID> <password> [<server>] [<port>] <export.txt";
+
+sub get_client($$$$$) {
+	my ($username, $domain, $password, $server, $port) = @_;
+	my $client = new Net::Jabber::Client();
+	my $status = $client->Connect( hostname=>$server, port=>$port );
+	die "Jabber connect error ($!)\n" unless defined $status;
+	my @result = $client->AuthSend(
+		username => $username,
+		password => $password,
+		resource => "jabbermigrate" );
+	if( $result[0] ne "ok" ) {
+		die "Jabber auth error: @result\n";
+	}
+	return $client;
+}
+
+sub export_roster($) {
+	my $client = shift;
+	my %roster = $client->RosterGet();
+	print Data::Dumper->Dump([\%roster], ["roster"]);
+}
+
+sub main() {
+	die "$usage\n" unless @ARGV >= 3 and @ARGV <= 5;
+	my ($command, $jid, $password, $server, $port) = @ARGV;
+	$command =~ /^(import|export)$/ or die "Unknown command: $command\n$usage\n";
+	my ($username, $domain);
+	if( $jid =~ /^([\w\-\.]+)@([\w\-\.]+)$/ ) {
+		($username, $domain) = ($1, $2);
+		$server = $domain unless defined $server;
+	} else {
+		 die "Bad JID: $jid\n";
+	}
+	$port = 5222 unless defined $port;
+	my $client = get_client( $username, $domain, $password, $server, $port );
+	if( $command eq "export" ) {
+		export_roster( $client );
+	} elsif( $command eq "import" ) {
+		import_roster( $client );
+	} else {
+		die; # we cannot be here
+	}
+}
+
+main;
