@@ -16,5 +16,5 @@ work for me.
 ## USAGE
 
 * `jabber-migrate export <JID> <password> [<server>] [<port>] >export.txt`
-* (optional) edit export.txt file to add or remove some contacts.
+* (optional) edit `export.txt` file to add or remove some contacts.
 * `jabber-migrate import <JID> <password> [<server>] [<port>] <export.txt`
