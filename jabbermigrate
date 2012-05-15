@@ -27,9 +27,27 @@ sub export_roster($) {
 	print Data::Dumper->Dump([\%roster], ["roster"]);
 }
 
+sub import_roster($) {
+	my $client = shift;
+	my %old_roster = $client->RosterGet();
+	my $roster;
+	eval join( "", <> ); # this is supposed to change $roster variable
+	die $@ if $@;
+	foreach my $jid (keys %$roster) {
+		$roster->{$jid}{"jid"} = $jid; # for RosterAdd
+		if( exists $old_roster{$jid} ) {
+			print "$jid already exists, skipping.\n";
+		} else {
+			print "Adding $jid.\n";
+			$client->RosterAdd( %{$roster->{$jid}} );
+		}
+	}
+}
+
 sub main() {
 	die "$usage\n" unless @ARGV >= 3 and @ARGV <= 5;
 	my ($command, $jid, $password, $server, $port) = @ARGV;
+	@ARGV = (); # to make <> read stdin
 	$command =~ /^(import|export)$/ or die "Unknown command: $command\n$usage\n";
 	my ($username, $domain);
 	if( $jid =~ /^([\w\-\.]+)@([\w\-\.]+)$/ ) {
