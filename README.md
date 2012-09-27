@@ -19,6 +19,6 @@ editing part, while `jabber-migrate` tools does the import/export part.
 
 ## USAGE
 
-* `jabber-migrate export <JID> <password> [<server>] [<port>] >export.txt`
-* (optional) edit `export.txt` file to add or remove some contacts.
-* `jabber-migrate import <JID> <password> [<server>] [<port>] <export.txt`
+* `jabber-migrate export <JID> <password> [<server>] [<port>] >roster.txt`
+* (optional) edit `roster.txt` file to add or remove some contacts.
+* `jabber-migrate import <JID> <password> [<server>] [<port>] <roster.txt`

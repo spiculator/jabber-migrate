@@ -4,8 +4,8 @@ use Net::Jabber;
 use FindBin;
 use Data::Dumper;
 my $usage = "Usage:
-	$FindBin::Script export <JID> <password> [<server>] [<port>] >export.txt
-	$FindBin::Script import <JID> <password> [<server>] [<port>] <export.txt";
+	$FindBin::Script export <JID> <password> [<server>] [<port>] >roster.txt
+	$FindBin::Script import <JID> <password> [<server>] [<port>] <roster.txt";
 
 sub get_client($$$$$) {
 	my ($username, $domain, $password, $server, $port) = @_;
