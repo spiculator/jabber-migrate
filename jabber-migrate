@@ -4,13 +4,13 @@ use Net::Jabber;
 use FindBin;
 use Data::Dumper;
 my $usage = "Usage:
-	$FindBin::Script export <JID> <password> [<server>] [<port>] >roster.txt
-	$FindBin::Script import <JID> <password> [<server>] [<port>] <roster.txt";
+	$FindBin::Script [--tls] export <JID> <password> [<server>] [<port>] >roster.txt
+	$FindBin::Script [--tls] import <JID> <password> [<server>] [<port>] <roster.txt";
 
-sub get_client($$$$$) {
-	my ($username, $domain, $password, $server, $port) = @_;
+sub get_client($$$$$$) {
+	my ($username, $domain, $password, $server, $port, $tls) = @_;
 	my $client = new Net::Jabber::Client();
-	my $status = $client->Connect( hostname=>$server, port=>$port );
+	my $status = $client->Connect( hostname=>$server, port=>$port, tls=>$tls );
 	die "Jabber connect error ($!)\n" unless defined $status;
 	my @result = $client->AuthSend(
 		username => $username,
@@ -46,6 +46,11 @@ sub import_roster($) {
 }
 
 sub main() {
+	my $tls = 0;
+	if( @ARGV and "--tls" eq $ARGV[0] ) {
+		$tls = 1;
+		shift @ARGV;
+	}
 	die "$usage\n" unless @ARGV >= 3 and @ARGV <= 5;
 	my ($command, $jid, $password, $server, $port) = @ARGV;
 	@ARGV = (); # to make <> read stdin
@@ -58,7 +63,7 @@ sub main() {
 		 die "Bad JID: $jid\n";
 	}
 	$port = 5222 unless defined $port;
-	my $client = get_client( $username, $domain, $password, $server, $port );
+	my $client = get_client( $username, $domain, $password, $server, $port, $tls );
 	if( $command eq "export" ) {
 		export_roster( $client );
 	} elsif( $command eq "import" ) {
