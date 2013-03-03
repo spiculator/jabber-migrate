@@ -10,7 +10,7 @@ work for me.
 
 This can also be used to edit jabber roster as a text file without migrating
 it to another server. You can use any scripts or text editors to do the
-editing part, while `jabber-migrate` tools does the import/export part.
+editing part, while `jabber-migrate` does the import/export part.
 
 ## REQUIREMENTS
 
