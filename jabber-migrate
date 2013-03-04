@@ -11,7 +11,11 @@ sub get_client($$$$$$) {
 	my ($username, $domain, $password, $server, $port, $tls) = @_;
 	my $client = new Net::Jabber::Client();
 	my $status = $client->Connect( hostname=>$server, port=>$port, tls=>$tls );
-	die "Jabber connect error ($!)\n" unless defined $status;
+	if( not defined $status ) {
+		warn "Jabber connect error: $!\n";
+		warn "Try --tls option\n" if not $tls;
+		exit 1;
+	}
 	my @result = $client->AuthSend(
 		username => $username,
 		password => $password,
